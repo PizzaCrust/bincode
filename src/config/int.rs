@@ -22,7 +22,7 @@ pub trait IntEncoding {
 
     #[inline(always)]
     fn len_size(len: usize) -> u64 {
-        Self::u64_size(len as u64)
+        Self::u32_size(len as u32)
     }
 
     /// Serializes a sequence length.
@@ -31,7 +31,7 @@ pub trait IntEncoding {
         ser: &mut ::ser::Serializer<W, O>,
         len: usize,
     ) -> Result<()> {
-        Self::serialize_u64(ser, len as u64)
+        Self::serialize_u32(ser, len as u32)
     }
 
     fn serialize_u16<W: Write, O: Options>(
@@ -69,7 +69,7 @@ pub trait IntEncoding {
     fn deserialize_len<'de, R: BincodeRead<'de>, O: Options>(
         de: &mut ::de::Deserializer<R, O>,
     ) -> Result<usize> {
-        Self::deserialize_u64(de).and_then(cast_u64_to_usize)
+        Ok(Self::deserialize_u32(de) as usize)
     }
 
     fn deserialize_u16<'de, R: BincodeRead<'de>, O: Options>(
